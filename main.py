@@ -89,7 +89,7 @@ def main():
 
     if submit:
         
-        path1 = "{}/{}/data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory, local_directory_path)
+        path1 = "./data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory, local_directory_path)
         path2 = "{}/{}/data/{}회차/{}교시 답안지.csv".format(current_directory, local_directory_path, rounds, lesson)
         path3 = '{}/{}/data/{}회차/{}교시 난이도.csv'.format(current_directory, local_directory_path, rounds, lesson)
         path4 = '{}/{}/data/{}회차/{}교시 문제내용.csv'.format(current_directory, local_directory_path, rounds, lesson)
