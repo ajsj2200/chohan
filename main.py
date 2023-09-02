@@ -115,12 +115,17 @@ def main():
                     
                     grouby_trend = question.groupby(['과목', '파트']).agg({'난이도': ['mean'], '파트': ['count']}).reset_index()
                     grouby_trend.columns = ['과목', '파트', '평균 난이도', '문제 갯수']
+
+                    # circle chart
                     fig = px.sunburst(grouby_trend, path=['과목', '파트'], values='문제 갯수',
                                     color='문제 갯수',
                                     hover_data=['평균 난이도'],
                                     color_continuous_scale='RdBu',
                                     color_continuous_midpoint=np.average(grouby_trend['문제 갯수']))
-                    
+                    st.plotly_chart(fig, use_container_width=True)
+
+                    # bar chart
+                    fig = px.bar(grouby_trend, x='과목', y='문제 갯수', color='파트')
                     st.plotly_chart(fig, use_container_width=True)
 
                     trend_tabs = st.tabs(list(trend_unique))
@@ -149,6 +154,10 @@ def main():
                                     color_continuous_scale='RdBu',
                                     color_continuous_midpoint=np.average(grouby_trend['문제 갯수']))
                     
+                    st.plotly_chart(fig, use_container_width=True)
+
+                    # bar chart
+                    fig = px.bar(grouby_trend, x='과목', y='문제 갯수', color='파트')
                     st.plotly_chart(fig, use_container_width=True)
 
                     trend_tabs = st.tabs(list(trend_unique))
@@ -186,6 +195,10 @@ def main():
                     
                     st.plotly_chart(fig, use_container_width=True)
 
+                    # bar chart
+                    fig = px.bar(grouby_trend, x='과목', y='평균 난이도', color='파트')
+                    st.plotly_chart(fig, use_container_width=True)
+
                     level_tabs = st.tabs(list(labels))
                     for i, label in enumerate(labels):
                         with level_tabs[i]:
@@ -217,6 +230,10 @@ def main():
                     
                     st.plotly_chart(fig, use_container_width=True)
 
+                    # bar chart
+                    fig = px.bar(grouby_trend, x='과목', y='평균 난이도', color='파트')
+                    st.plotly_chart(fig, use_container_width=True)
+                    
                     level_tabs = st.tabs(list(labels))
                     for i, label in enumerate(labels):
                         with level_tabs[i]:
