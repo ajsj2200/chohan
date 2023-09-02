@@ -159,8 +159,9 @@ def main():
 
                     # bar chart
                     fig = px.bar(grouby_trend, x='과목', y='문제 갯수', color='파트')
-                    st.plotly_chart(fig, use_container_width=True)
                     fig.update_layout(title='틀린 문제 갯수')
+                    st.plotly_chart(fig, use_container_width=True)
+                    
 
                     trend_tabs = st.tabs(list(trend_unique))
                     for i, trend in enumerate(trend_unique):
