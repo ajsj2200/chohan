@@ -42,8 +42,10 @@ def auth(my_number, my_code, df):
         st.error("학번을 확인해주세요.")
     elif len(search_code) == 0:
         st.error("코드를 확인해주세요.")
-    else:
+    elif len(search_number) != 0:
         return df[df['학번'] == my_number]
+    else:
+        st.error('학번과 코드를 확인해주세요.')
 
 def get_question_level(path):
     questions_level = pd.read_csv(path, encoding='cp949').iloc[1:]
