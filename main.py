@@ -18,6 +18,7 @@ else:
 
 # 현재 작업 디렉터리 가져오기
 current_directory = os.getcwd()
+st.text(current_directory)
 
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
