@@ -74,9 +74,9 @@ def main():
     if submit:
         
         path1 = "data/name_list.csv"
-        path2 = "./data/{}회차/{}교시 답안지.csv".format(rounds, lesson)
-        path3 = './data/{}회차/{}교시 난이도.csv'.format(rounds, lesson)
-        path4 = './data/{}회차/{}교시 문제내용.csv'.format(rounds, lesson)
+        path2 = "data/{}/{}_sheet.csv".format(rounds, lesson)
+        path3 = 'data/{}/{}_level.csv'.format(rounds, lesson)
+        path4 = 'data/{}/{}_contents.csv'.format(rounds, lesson)
         df = get_student_dict(path1, path2)
         my_df = auth(my_number, my_code, df)
 
