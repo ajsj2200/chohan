@@ -11,6 +11,9 @@ file_list = os.listdir('data')
 st.text(current_directory)
 st.text(file_list)
 
+path1 = "data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
+pd.read_csv(path1)
+
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
     student_list = student_list.iloc[2:]
