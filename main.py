@@ -7,7 +7,7 @@ import git
 
 # 현재 작업 디렉터리 가져오기
 current_directory = os.getcwd()
-file_list = os.listdir('data')
+file_list = os.listdir()
 st.text(current_directory)
 st.text(file_list)
 
