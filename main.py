@@ -126,6 +126,7 @@ def main():
 
                     # bar chart
                     fig = px.bar(grouby_trend, x='과목', y='문제 갯수', color='파트')
+                    fig.update_layout(title='문제 갯수')
                     st.plotly_chart(fig, use_container_width=True)
 
                     trend_tabs = st.tabs(list(trend_unique))
@@ -159,6 +160,7 @@ def main():
                     # bar chart
                     fig = px.bar(grouby_trend, x='과목', y='문제 갯수', color='파트')
                     st.plotly_chart(fig, use_container_width=True)
+                    fig.update_layout(title='틀린 문제 갯수')
 
                     trend_tabs = st.tabs(list(trend_unique))
                     for i, trend in enumerate(trend_unique):
@@ -197,6 +199,7 @@ def main():
 
                     # bar chart
                     fig = px.bar(grouby_trend, x='과목', y='평균 난이도', color='파트')
+                    fig.update_layout(title='평균 난이도')
                     st.plotly_chart(fig, use_container_width=True)
 
                     level_tabs = st.tabs(list(labels))
@@ -232,8 +235,10 @@ def main():
 
                     # bar chart
                     fig = px.bar(grouby_trend, x='과목', y='평균 난이도', color='파트')
+                    fig.update_layout(title='평균 난이도')
                     st.plotly_chart(fig, use_container_width=True)
-                    
+
+
                     level_tabs = st.tabs(list(labels))
                     for i, label in enumerate(labels):
                         with level_tabs[i]:
