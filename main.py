@@ -6,8 +6,9 @@ import os
 
 # 현재 작업 디렉터리 가져오기
 current_directory = os.getcwd()
-
-
+# 현재 디렉토리에 있는 파일 목록 가져오기
+file_list = os.listdir(current_directory)
+print(file_list)
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
     student_list = student_list.iloc[2:]
