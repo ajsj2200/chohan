@@ -5,23 +5,12 @@ import time
 import os
 import git
 
-local_directory_path = './chohan'
-
-# Repository URL
-repo_url = 'https://github.com/ajsj2200/chohan.git'
-
-# 디렉토리가 존재하지 않을 경우에만 clone
-if not os.path.exists(local_directory_path):
-    git.Repo.clone_from(repo_url, local_directory_path)
-else:
-    print(f"{local_directory_path} already exists. Skipping clone.")
-
 # 현재 작업 디렉터리 가져오기
 current_directory = os.getcwd()
-
 file_list = os.listdir('data')
 st.text(current_directory)
 st.text(file_list)
+
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
     student_list = student_list.iloc[2:]
@@ -90,7 +79,7 @@ def main():
 
     if submit:
         
-        path1 = "{}/data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
+        path1 = "data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
         path2 = "{}/{}/data/{}회차/{}교시 답안지.csv".format(current_directory, local_directory_path, rounds, lesson)
         path3 = '{}/{}/data/{}회차/{}교시 난이도.csv'.format(current_directory, local_directory_path, rounds, lesson)
         path4 = '{}/{}/data/{}회차/{}교시 문제내용.csv'.format(current_directory, local_directory_path, rounds, lesson)
