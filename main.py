@@ -2,6 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
+import os
+
+# 현재 작업 디렉터리 가져오기
+current_directory = os.getcwd()
+
 
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
@@ -63,18 +68,18 @@ def get_question_content(path):
 def main():
 
     with st.sidebar:
-        my_number = st.text_input("학번 입력", "")
-        my_code = st.text_input("코드 입력", "")
+        my_number = st.text_input("학번 입력", "202119124")
+        my_code = st.text_input("코드 입력", "진짜조한웅")
         rounds = st.slider("회차 선택", 1, 15, 1)
         lesson = st.slider("교시 선택", 1, 3, 1)
         submit = st.button("제출")
 
     if submit:
         
-        path1 = "data/2023학년도 3학년 모의고사 결과표.csv"
-        path2 = "data/{}회차/{}교시 답안지.csv".format(rounds, lesson)
-        path3 = 'data/{}회차/{}교시 난이도.csv'.format(rounds, lesson)
-        path4 = 'data/{}회차/{}교시 문제내용.csv'.format(rounds, lesson)
+        path1 = "{}/data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
+        path2 = "{}/data/{}회차/{}교시 답안지.csv".format(current_directory, rounds, lesson)
+        path3 = '{}/data/{}회차/{}교시 난이도.csv'.format(current_directory, rounds, lesson)
+        path4 = '{}/data/{}회차/{}교시 문제내용.csv'.format(current_directory, rounds, lesson)
 
         df = get_student_dict(path1, path2)
         my_df = auth(my_number, my_code, df)
