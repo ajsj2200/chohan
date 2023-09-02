@@ -5,13 +5,6 @@ import time
 import os
 import git
 
-# 현재 작업 디렉터리 가져오기
-current_directory = os.getcwd()
-file_list = os.listdir()
-st.text(current_directory)
-st.text(file_list)
-
-st.text(pd.read_csv('d.csv'))
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
     student_list = student_list.iloc[2:]
@@ -80,7 +73,7 @@ def main():
 
     if submit:
         
-        path1 = "/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
+        path1 = "data/name_list.csv"
         path2 = "./data/{}회차/{}교시 답안지.csv".format(rounds, lesson)
         path3 = './data/{}회차/{}교시 난이도.csv'.format(rounds, lesson)
         path4 = './data/{}회차/{}교시 문제내용.csv'.format(rounds, lesson)
