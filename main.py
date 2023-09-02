@@ -4,6 +4,7 @@ import numpy as np
 import time
 import os
 import git
+import plotly.express as px
 
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
@@ -65,22 +66,30 @@ def get_question_content(path):
     return questions_content
 
 def main():
-
+    st.set_page_config(layout="wide")
+    st.title("문제 분석기")
+    
     with st.sidebar:
-        my_number = st.text_input("학번 입력", "202119124")
-        my_code = st.text_input("코드 입력", "진짜조한웅")
+        my_number = st.text_input("학번 입력", "202119135")
+        my_code = st.text_input("코드 입력", "해리포터")
         rounds = st.slider("회차 선택", 1, 15, 1)
         lesson = st.slider("교시 선택", 1, 3, 1)
         submit = st.button("제출")
+        st.empty()
+        st.caption('made by ajsj2200')
+
+    if not submit:
+        
+        st.caption('사이브바에서 학번과 코드를 입력하고 회차와 교시를 선택한 뒤 제출하세요!')
 
     if submit:
-        
         path1 = "data/name_list.csv"
         path2 = "data/{}/{}_sheet.csv".format(rounds, lesson)
         path3 = 'data/{}/{}_level.csv'.format(rounds, lesson)
         path4 = 'data/{}/{}_contents.csv'.format(rounds, lesson)
         df = get_student_dict(path1, path2)
         my_df = auth(my_number, my_code, df)
+        my_df.fillna('-1', inplace=True)
 
         # 학번, 코드 칼럼 제외하고 int로 변환
         my_df.iloc[:, 2:] = my_df.iloc[:, 2:].astype(int).astype(str)
@@ -95,85 +104,129 @@ def main():
         question_incorrect = question[question['내 정답'] != question['정답']]
 
         if my_df is not None:
-            tabs = st.tabs(["출제 경향", "오답 문제", "난이도", "난이도별 오답문제"])
+            col1, col2 = st.columns(2)
 
-            # 출제 경향 탭
-            with tabs[0]:
-                trend_unique = question['과목'].unique()
-                
-                for trend in trend_unique:
-                    st.header(f"{trend} 과목")
-                    trend_df = question[question['과목'] == trend]
+            with col1:
+                tabs = st.tabs(["출제 경향", "출제 경향별 오답 문제"])
+
+                # 출제 경향 탭
+                with tabs[0]:
+                    trend_unique = question['과목'].unique()
                     
-                    part_unique = trend_df['파트'].unique()
-                    for i, part in enumerate(part_unique):
-                        st.subheader(f"{i+1}. {part} 파트")
-                        part_df = trend_df[trend_df['파트'] == part]
-                        text = part_df.index.values
-                        text = [x+'번' for x in text]
-                        st.text(text)
-                        st.markdown('---')
-            
-            # 오답 문제 탭
-            with tabs[1]:
-                trend_unique = question['과목'].unique()
-                
-                for trend in trend_unique:
-                    st.header(f"{trend} 과목")
-                    trend_df_incorrect = question_incorrect[question_incorrect['과목'] == trend]
+                    grouby_trend = question.groupby(['과목', '파트']).agg({'난이도': ['mean'], '파트': ['count']}).reset_index()
+                    grouby_trend.columns = ['과목', '파트', '평균 난이도', '문제 갯수']
+                    fig = px.sunburst(grouby_trend, path=['과목', '파트'], values='문제 갯수',
+                                    color='문제 갯수',
+                                    hover_data=['평균 난이도'],
+                                    color_continuous_scale='RdBu',
+                                    color_continuous_midpoint=np.average(grouby_trend['문제 갯수']))
                     
-                    part_unique = trend_df_incorrect['파트'].unique()
-                    for i, part in enumerate(part_unique):
-                        st.subheader(f"{i+1}. {part} 파트")
-                        part_df = trend_df_incorrect[trend_df_incorrect['파트'] == part]
-                        text = part_df.index.values
-                        text = [x+'번' for x in text]
-                        st.text(text)
-                        st.markdown('---')
+                    st.plotly_chart(fig, use_container_width=True)
 
-            # 난이도 탭
-            with tabs[2]:
-                tmp = question.copy()
-                tmp['난이도'] = tmp['난이도'].astype(float)
+                    trend_tabs = st.tabs(list(trend_unique))
+                    for i, trend in enumerate(trend_unique):
+                        with trend_tabs[i]:
+                            trend_df = question[question['과목'] == trend]
+                            part_unique = trend_df['파트'].unique()
+                            for j, part in enumerate(part_unique):
+                                st.subheader(f"{j+1}. {part} 파트")
+                                part_df = trend_df[trend_df['파트'] == part]
+                                text = part_df.index.values
+                                text = [x+'번' for x in text]
+                                text = str(text).replace('[', '').replace(']', '').replace("'", '')
+                                st.caption(text)
+                                st.markdown('---')
 
-                # 난이도를 5단위로 구간을 나누고, 그에 따른 라벨링
-                bins = [i for i in range(0, 101, 5)]  # 0~100까지 5단위
-                labels = [f'{i}-{i+5}' for i in range(0, 100, 5)]
-                tmp['난이도 구간'] = pd.cut(tmp['난이도'], bins=bins, labels=labels, right=False)
+                # 오답 문제 탭
+                with tabs[1]:
+                    trend_unique = question['과목'].unique()
 
-                # 각 구간별 데이터 출력
-                for label in reversed(labels):
-                    st.subheader(f"난이도 {label}")
-                    df_level = tmp[tmp['난이도 구간'] == label]
-                    text = df_level.index.values
-                    text = [x+'번' for x in text]
-                    if len(text) > 0:
-                        st.text(text)
-                    else:
-                        st.text("해당 구간에 문제가 없습니다.")
-                    st.markdown('---')
+                    grouby_trend = question_incorrect.groupby(['과목', '파트']).agg({'난이도': ['mean'], '파트': ['count']}).reset_index()
+                    grouby_trend.columns = ['과목', '파트', '평균 난이도', '문제 갯수']
+                    fig = px.sunburst(grouby_trend, path=['과목', '파트'], values='문제 갯수',
+                                    color='문제 갯수',
+                                    hover_data=['평균 난이도'],
+                                    color_continuous_scale='RdBu',
+                                    color_continuous_midpoint=np.average(grouby_trend['문제 갯수']))
+                    
+                    st.plotly_chart(fig, use_container_width=True)
 
-            # 난이도별 오답문제 탭
-            with tabs[3]:
-                tmp = question_incorrect.copy()
-                tmp['난이도'] = tmp['난이도'].astype(float)
+                    trend_tabs = st.tabs(list(trend_unique))
+                    for i, trend in enumerate(trend_unique):
+                        with trend_tabs[i]:
+                            trend_df = question[question['과목'] == trend]
+                            part_unique = trend_df['파트'].unique()
+                            for j, part in enumerate(part_unique):
+                                st.subheader(f"{j+1}. {part} 파트")
+                                part_df = trend_df[trend_df['파트'] == part]
+                                text = part_df.index.values
+                                text = [x+'번' for x in text]
+                                text = str(text).replace('[', '').replace(']', '').replace("'", '')
+                                st.caption(text)
+                                st.markdown('---')
+            with col2:
+                tabs = st.tabs(["난이도", "난이도별 오답문제"])
+                # 난이도 탭
+                with tabs[0]:
+                    tmp = question.copy()
+                    tmp['난이도'] = tmp['난이도'].astype(float)
 
-                # 난이도를 5단위로 구간을 나누고, 그에 따른 라벨링
-                bins = [i for i in range(0, 101, 5)]  # 0~100까지 5단위
-                labels = [f'{i}-{i+5}' for i in range(0, 100, 5)]
-                tmp['난이도 구간'] = pd.cut(tmp['난이도'], bins=bins, labels=labels, right=False)
+                    # 난이도를 5단위로 구간을 나누고, 그에 따른 라벨링
+                    bins = [i for i in range(0, 101, 10)]  # 0~100까지 5단위
+                    labels = [f'{i}-{i+10}' for i in range(0, 100, 10)]
+                    tmp['난이도 구간'] = pd.cut(tmp['난이도'], bins=bins, labels=labels, right=False)
 
-                # 각 구간별 데이터 출력
-                for label in reversed(labels):
-                    st.subheader(f"난이도 {label}")
-                    df_level = tmp[tmp['난이도 구간'] == label]
-                    text = df_level.index.values
-                    text = [x+'번' for x in text]
-                    if len(text) > 0:
-                        st.text(text)
-                    else:
-                        st.text("해당 구간에 문제가 없습니다.")
-                    st.markdown('---')
+                    grouby_trend = question.groupby(['과목', '파트']).agg({'난이도': ['mean'], '파트': ['count']}).reset_index()
+                    grouby_trend.columns = ['과목', '파트', '평균 난이도', '문제 갯수']
+                    fig = px.sunburst(grouby_trend, path=['과목', '파트'], values='평균 난이도',
+                                    color='평균 난이도',
+                                    hover_data=['문제 갯수'],
+                                    color_continuous_scale='RdBu',
+                                    color_continuous_midpoint=np.average(grouby_trend['평균 난이도']))
+                    
+                    st.plotly_chart(fig, use_container_width=True)
+
+                    level_tabs = st.tabs(list(labels))
+                    for i, label in enumerate(labels):
+                        with level_tabs[i]:
+                            level_df = tmp[tmp['난이도 구간'] == label]
+                            text = level_df.index.values
+                            text = [x+'번' for x in text]
+                            text = str(text).replace('[', '').replace(']', '').replace("'", '')
+                            st.caption(text)
+                            st.markdown('---')
+
+
+                # 난이도별 오답문제 탭
+                with tabs[1]:
+                    tmp = question_incorrect.copy()
+                    tmp['난이도'] = tmp['난이도'].astype(float)
+
+                    # 난이도를 5단위로 구간을 나누고, 그에 따른 라벨링
+                    bins = [i for i in range(0, 101, 10)]  # 0~100까지 5단위
+                    labels = [f'{i}-{i+10}' for i in range(0, 100, 10)]
+                    tmp['난이도 구간'] = pd.cut(tmp['난이도'], bins=bins, labels=labels, right=False)
+
+                    grouby_trend = question_incorrect.groupby(['과목', '파트']).agg({'난이도': ['mean'], '파트': ['count']}).reset_index()
+                    grouby_trend.columns = ['과목', '파트', '평균 난이도', '문제 갯수']
+                    fig = px.sunburst(grouby_trend, path=['과목', '파트'], values='평균 난이도',
+                                    color='평균 난이도',
+                                    hover_data=['문제 갯수'],
+                                    color_continuous_scale='RdBu',
+                                    color_continuous_midpoint=np.average(grouby_trend['평균 난이도']))
+                    
+                    st.plotly_chart(fig, use_container_width=True)
+
+                    level_tabs = st.tabs(list(labels))
+                    for i, label in enumerate(labels):
+                        with level_tabs[i]:
+                            level_df = tmp[tmp['난이도 구간'] == label]
+                            text = level_df.index.values
+                            text = [x+'번' for x in text]
+                            text = str(text).replace('[', '').replace(']', '').replace("'", '')
+                            st.caption(text)
+                            st.markdown('---')
+
 
 
 if __name__ == "__main__":
