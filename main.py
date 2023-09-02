@@ -11,7 +11,7 @@ file_list = os.listdir()
 st.text(current_directory)
 st.text(file_list)
 
-
+st.text(pd.read_csv('d.csv'))
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
     student_list = student_list.iloc[2:]
