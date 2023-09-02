@@ -63,8 +63,8 @@ def get_question_content(path):
 def main():
 
     with st.sidebar:
-        my_number = st.text_input("학번 입력", "202119124")
-        my_code = st.text_input("코드 입력", "진짜조한웅")
+        my_number = st.text_input("학번 입력", "")
+        my_code = st.text_input("코드 입력", "")
         rounds = st.slider("회차 선택", 1, 15, 1)
         lesson = st.slider("교시 선택", 1, 3, 1)
         submit = st.button("제출")
