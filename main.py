@@ -20,6 +20,7 @@ else:
 current_directory = os.getcwd()
 
 file_list = os.listdir('data')
+st.text(current_directory)
 st.text(file_list)
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
