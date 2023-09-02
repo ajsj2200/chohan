@@ -3,12 +3,14 @@ import pandas as pd
 import numpy as np
 import time
 import os
+import git
+
+# Repository URL
+repo_url = 'https://github.com/ajsj2200/chohan.git'
 
 # 현재 작업 디렉터리 가져오기
 current_directory = os.getcwd()
-# 현재 디렉토리에 있는 파일 목록 가져오기
-file_list = os.listdir(current_directory)
-print(file_list)
+
 def get_student_dict(path, path2):
     student_list = pd.read_csv(path)
     student_list = student_list.iloc[2:]
@@ -77,10 +79,10 @@ def main():
 
     if submit:
         
-        path1 = "{}/data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
-        path2 = "{}/data/{}회차/{}교시 답안지.csv".format(current_directory, rounds, lesson)
-        path3 = '{}/data/{}회차/{}교시 난이도.csv'.format(current_directory, rounds, lesson)
-        path4 = '{}/data/{}회차/{}교시 문제내용.csv'.format(current_directory, rounds, lesson)
+        path1 = "{}/data/data/2023학년도 3학년 모의고사 결과표.csv".format(current_directory)
+        path2 = "{}/data/data/{}회차/{}교시 답안지.csv".format(current_directory, rounds, lesson)
+        path3 = '{}/data/data/{}회차/{}교시 난이도.csv'.format(current_directory, rounds, lesson)
+        path4 = '{}/data/data/{}회차/{}교시 문제내용.csv'.format(current_directory, rounds, lesson)
 
         df = get_student_dict(path1, path2)
         my_df = auth(my_number, my_code, df)
