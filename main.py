@@ -243,9 +243,10 @@ def main():
                     grouby_trend = question_incorrect.groupby(['과목', '파트']).agg(
                         {'난이도': ['mean'], '파트': ['count']}).reset_index()
                     grouby_trend.columns = ['과목', '파트', '평균 난이도', '문제 개수']
+                    grouby_trend[grouby_trend['평균 난이도'] == 0] = 0.01
                     fig = px.sunburst(grouby_trend, path=['과목', '파트'], values='평균 난이도',
                                       color='평균 난이도',
-                                      hover_data=['문제 갯수'],
+                                      hover_data=['문제 개수'],
                                       color_continuous_scale='RdBu',
                                       color_continuous_midpoint=np.average(grouby_trend['평균 난이도']))
 
